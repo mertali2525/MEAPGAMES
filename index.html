@@ -1,28 +1,137 @@
 <!DOCTYPE html>
-<html>
+<html lang="tr">
 <head>
-  <meta charset="utf-8">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>MEAP GAMES</title>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
   <style>
-    body {margin:0; background:#ff0000; color:white; font-family:Arial; text-align:center; padding:50px;}
-    h1 {font-size:70px; margin:20px;}
-    h2 {font-size:50px; margin:10px;}
-    .btn {background:white; color:red; padding:20px 50px; margin:20px; font-size:25px; border-radius:20px; display:inline-block; text-decoration:none; font-weight:bold;}
-    .download {background:yellow; color:black;}
+    body{font-family:Arial;background:#111;color:#fff;text-align:center;padding:50px;}
+    input,button{padding:12px;margin:10px;border-radius:8px;border:none;font-size:16px;}
+    button{background:#00ff00;color:#000;cursor:pointer;}
+    #adminPanel,#profile{display:none;margin-top:30px;padding:20px;background:#222;border-radius:12px;}
   </style>
 </head>
 <body>
-  <h1>MEAP</h1>
-  <h2>GAMES</h2>
-  
-  <br><br>
-  <a href="#" class="btn">HESAP OLUŞTUR</a>
-  <a href="#" class="btn">GİRİŞ YAP</a>
-  
-  <br><br><br>
-  <p style="font-size:30px;">Uygulamamızı İndirin</p>
-  <a href="BURAYA_DRIVE_LİNK_GELCEK" class="btn download">
-    HEMEN İNDİR (APK)
-  </a>
+  <h1>MEAP GAMES</h1>
+
+  <div id="auth">
+    <h2>Hesap Oluştur</h2>
+    <input type="email" id="regEmail" placeholder="E-posta"><br>
+    <input type="password" id="regPass" placeholder="Şifre"><br>
+    <button onclick="register()">Kayıt Ol</button><br><br>
+
+    <h2>Giriş Yap</h2>
+    <input type="email" id="loginEmail" placeholder="E-posta"><br>
+    <input type="password" id="loginPass" placeholder="Şifre"><br>
+    <button onclick="login()">Giriş Yap</button><br><br>
+    <button onclick="logout()" id="logoutBtn" style="display:none;background:#ff0000;">Çıkış Yap</button>
+  </div>
+
+  <div id="profile">
+    <h2>Profil</h2>
+    <input type="text" id="displayName" placeholder="İsim"><br>
+    <input type="text" id="tag" placeholder="Etiket (örn: #1234)" maxlength="10"><br>
+    <button onclick="saveProfile()">Kaydet</button>
+    <p id="profileInfo"></p>
+  </div>
+
+  <div id="adminPanel">
+    <h2>⚡ YÖNETİCİ PANELİ ⚡</h2>
+    <button onclick="alert('Oyun ekleme sistemi yakında!')">OYUN EKLE</button>
+  </div>
+
+<script>
+// Firebase Config (senin kodun)
+const firebaseConfig = {
+  apiKey: "AIzaSyDp2dofx_F9_p7PVaxXcjWlhxLwcRtF19o",
+  authDomain: "meap-games.firebaseapp.com",
+  databaseURL: "https://meap-games-default-rtdb.europe-west1.firebasedatabase.app",
+  projectId: "meap-games",
+  storageBucket: "meap-games.firebasestorage.app",
+  messagingSenderId: "1092303341508",
+  appId: "1:1092303341508:web:4f6412d44da060c669c691"
+};
+
+firebase.initializeApp(firebaseConfig);
+const auth = firebase.auth();
+const db = firebase.database();
+
+// Kayıt
+function register(){
+  const email = document.getElementById("regEmail").value;
+  const pass = document.getElementById("regPass").value;
+  auth.createUserWithEmailAndPassword(email, pass)
+    .then(() => alert("Kayıt başarılı!"))
+    .catch(err => alert(err.message));
+}
+
+// Giriş
+function login(){
+  const email = document.getElementById("loginEmail").value;
+  const pass = document.getElementById("loginPass").value;
+  auth.signInWithEmailAndPassword(email, pass)
+    .then(() => {})
+    .catch(err => alert(err.message));
+}
+
+// Çıkış
+function logout(){
+  auth.signOut();
+}
+
+// Durum kontrol
+auth.onAuthStateChanged(user => {
+  if(user){
+    document.getElementById("auth").style.display = "none";
+    document.getElementById("logoutBtn").style.display = "block";
+    document.getElementById("profile").style.display = "block";
+    loadProfile(user.uid);
+    if(user.email === "seninmailinburaya@gmail.com"){ // BURAYA KENDİ MAİLİNİ YAZ
+      document.getElementById("adminPanel").style.display = "block";
+    }
+  } else {
+    document.getElementById("auth").style.display = "block";
+    document.getElementById("logoutBtn").style.display = "none";
+    document.getElementById("profile").style.display = "none";
+    document.getElementById("adminPanel").style.display = "none";
+  }
+});
+
+// Profil kaydet
+function saveProfile(){
+  const uid = auth.currentUser.uid;
+  const name = document.getElementById("displayName").value;
+  let tag = document.getElementById("tag").value.toUpperCase();
+
+  if(tag && !tag.startsWith("#")) tag = "#" + tag;
+
+  // Etiket çakışma kontrolü
+  db.ref("tags").child(tag.replace("#","")).once("value", snap => {
+    if(snap.exists() && snap.val() !== uid){
+      alert("Bu etiket zaten kullanılıyor!");
+    } else {
+      db.ref("users/"+uid).set({name, tag, email: auth.currentUser.email});
+      db.ref("tags").child(tag.replace("#","")).set(uid);
+      alert("Profil kaydedildi!");
+      loadProfile(uid);
+    }
+  });
+}
+
+function loadProfile(uid){
+  db.ref("users/"+uid).once("value", snap => {
+    if(snap.val()){
+      const data = snap.val();
+      document.getElementById("profileInfo").innerHTML = 
+        `Merhaba <b>\( {data.name || "İsim yok"}</b><br>Etiket: <b> \){data.tag || "Yok"}</b>`;
+      document.getElementById("displayName").value = data.name || "";
+      document.getElementById("tag").value = data.tag || "";
+    }
+  });
+}
+</script>
 </body>
 </html>
