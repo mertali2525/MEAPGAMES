@@ -3,23 +3,22 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <meta name="google-site-verification" content="OpgGTyeLX_P5q5M9xdYbsI-HHJgnxV3E603OTi6aOzU" />
   <title>MEAP GAMES - Giriş</title>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@900&display=swap');
-    body { background: #ff3333; color: white; font-family: Arial; text-align: center; margin: 0; padding: 20px; }
-    .logo { margin-top: 30px; font-family: 'Orbitron', sans-serif; font-size: 70px; letter-spacing: 8px; text-shadow: 0 0 20px rgba(255,255,255,0.8); }
-    .logo span { display: block; font-size: 90px; }
-    .underline { width: 400px; height: 6px; background: white; margin: 20px auto; box-shadow: 0 0 15px white; }
-    h2 { margin: 50px 0 30px; font-size: 32px; }
-    .input-group { position: relative; width: 90%; max-width: 350px; margin: 15px auto; }
-    input { padding: 15px 45px 15px 15px; width: 100%; border: none; border-radius: 8px; background: rgba(255,255,255,0.2); color: white; font-size: 18px; }
-    input::placeholder { color: #ffcccc; }
-    .eye { position: absolute; right: 15px; top: 50%; transform: translateY(-50%); cursor: pointer; font-size: 20px; }
-    button { padding: 15px; width: 90%; max-width: 350px; background: white; color: #ff3333; font-weight: bold; border: none; border-radius: 8px; font-size: 20px; cursor: pointer; margin: 20px auto; }
-    button:hover { background: #ff6666; color: white; }
-    #adminPanel { margin-top: 60px; font-size: 36px; display: none; }
-    a { color: white; text-decoration: underline; font-size: 18px; }
+    body { background:#ff3333; color:white; font-family:Arial; text-align:center; margin:0; padding:20px; }
+    .logo { margin-top:30px; font-family:'Orbitron',sans-serif; font-size:70px; letter-spacing:8px; text-shadow:0 0 20px rgba(255,255,255,0.8); }
+    .logo span { display:block; font-size:90px; }
+    .underline { width:400px; height:6px; background:white; margin:20px auto; box-shadow:0 0 15px white; }
+    h2 { margin:50px 0 30px; font-size:32px; }
+    .input-group { position:relative; width:90%; max-width:350px; margin:15px auto; }
+    input { padding:15px 45px 15px 15px; width:100%; border:none; border-radius:8px; background:rgba(255,255,255,0.2); color:white; font-size:18px; box-sizing:border-box; }
+    input::placeholder { color:#ffcccc; }
+    .eye { position:absolute; right:15px; top:50%; transform:translateY(-50%); cursor:pointer; font-size:22px; user-select:none; }
+    button { padding:15px; width:90%; max-width:350px; background:white; color:#ff3333; font-weight:bold; border:none; border-radius:8px; font-size:20px; cursor:pointer; margin:20px auto; }
+    button:hover { background:#ff6666; color:white; }
+    #adminPanel { margin-top:60px; font-size:36px; display:none; color:yellow; }
+    a { color:white; text-decoration:underline; font-size:18px; }
   </style>
 </head>
 <body>
@@ -38,35 +37,46 @@
   </div>
   <div class="input-group">
     <input type="password" id="pass" placeholder="Şifre" />
-    <span class="eye" onclick="togglePass(this)">👁️</span>
+    <span class="eye" onclick="toggleEye(this)">Göz</span>
   </div>
 
   <button onclick="girisYap()">GİRİŞ YAP</button>
   <p><a href="kayit.html">Hesap oluştur →</a></p>
 
-  <div id="adminPanel">⚡ YÖNETİCİ PANELİ ⚡</div>
+  <div id="adminPanel">YÖNETİCİ PANELİ</div>
 
   <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-auth-compat.js"></script>
-
   <script>
-  const firebaseConfig = apiKey: "AIzaSyDp2dofX_F9_p7PVaXxCjW9wY8e8vF6n5m3k1h0g",
+    const firebaseConfig = {
+      apiKey: "AIzaSyDp2dofX_F9_p7PVaXxCjW9wY8e8vF6n5m3k1h0g",
+      authDomain: "meap-games.firebaseapp.com",
+      projectId: "meap-games",
+      storageBucket: "meap-games.firebasestorage.app",
+      messagingSenderId: "1092303341508",
+      appId: "1:1092303341508:web:2b8f9e8a7d6c5b4a3f2e1d"
+    };
     firebase.initializeApp(firebaseConfig);
     const auth = firebase.auth();
 
-    function togglePass(eye) {
-      const input = eye.previousElementSibling;
-      if (input.type === "password") { input.type = "text"; eye.textContent = "🙈"; }
-      else { input.type = "password"; eye.textContent = "👁️"; }
+    function toggleEye(el) {
+      const input = el.previousElementSibling;
+      if (input.type === "password") {
+        input.type = "text";
+        el.textContent = "Gizle";
+      } else {
+        input.type = "password";
+        el.textContent = "Göz";
+      }
     }
 
     function girisYap() {
-      const email = document.getElementById("email").value;
+      const email = document.getElementById("email").value.trim();
       const pass = document.getElementById("pass").value;
 
       if (email === "maskral2525@gmail.com" && pass === "mertali2013") {
         document.getElementById("adminPanel").style.display = "block";
-        alert("⚡ ADMIN GİRİŞİ BAŞARILI ⚡");
+        alert("ADMIN GİRİŞİ BAŞARILI!");
         return;
       }
 
