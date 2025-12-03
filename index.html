@@ -107,7 +107,7 @@
       let pass = document.getElementById("girisGecici").value;
       yetki.signInWithEmailAndPassword(eposta, pass)
         .then(user => {
-          if (eposta === "admin@meapgames.com") {
+    if (eposta === "maskral2525@gmail.com") {
             document.getElementById("adminPanel").style.display = "block";
           }
           alert("Giriş başarılı!");
@@ -116,7 +116,7 @@
     }
 
     yetki.onAuthStateChanged(kullanici => {
-      if (kullanici && kullanici.email === "admin@meapgames.com") {
+    if (kullanici && kullanici.email === "maskral2525@gmail.com") {
         document.getElementById("adminPanel").style.display = "block";
       }
     });
