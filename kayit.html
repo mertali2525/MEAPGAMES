@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>MEAP GAMES - Kayıt</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@900&display=swap');
+    body { background: #ff3333; color: white; font-family: Arial; text-align: center; margin: 0; padding: 20px; }
+    .logo { margin-top: 30px; font-family: 'Orbitron', sans-serif; font-size: 70px; letter-spacing: 8px; text-shadow: 0 0 20px rgba(255,255,255,0.8); }
+    .logo span { display: block; font-size: 90px; }
+    .underline { width: 400px; height: 6px; background: white; margin: 20px auto; box-shadow: 0 0 15px white; }
+    h2 { margin: 50px 0 30px; font-size: 32px; }
+    .input-group { position: relative; width: 90%; max-width: 350px; margin: 15px auto; }
+    input { padding: 15px 45px 15px 15px; width: 100%; border: none; border-radius: 8px; background: rgba(255,255,255,0.2); color: white; font-size: 18px; }
+    input::placeholder { color: #ffcccc; }
+    .eye { position: absolute; right: 15px; top: 50%; transform: translateY(-50%); cursor: pointer; font-size: 20px; }
+    button { padding: 15px; width: 90%; max-width: 350px; background: white; color: #ff3333; font-weight: bold; border: none; border-radius: 8px; font-size: 20px; cursor: pointer; margin: 20px auto; }
+    button:hover { background: #ff6666; color: white; }
+    a { color: white; text-decoration: underline; font-size: 18px; }
+  </style>
+</head>
+<body>
+
+  <div class="logo">
+    MEAP
+    <div class="underline"></div>
+    <span>GAMES</span>
+    <div class="underline"></div>
+  </div>
+
+  <h2>HESAP OLUŞTUR</h2>
+
+  <div class="input-group">
+    <input type="email" id="email" placeholder="E-posta" required />
+  </div>
+  <div class="input-group">
+    <input type="password" id="pass" placeholder="Şifre (min. 6 karakter)" required />
+    <span class="eye" onclick="togglePass(this)">👁️</span>
+  </div>
+
+  <button onclick="kayitOl()">KAYIT OL</button>
+  <p><a href="index.html">← Zaten hesabın var mı? Giriş yap</a></p>
+
+  <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-auth-compat.js"></script>
+
+  <script>
+    const firebaseConfig = { 
+      apiKey: "AIzaSyDp2dofX_F9_p7PVaXxCjW", 
+      authDomain: "meap-games.firebaseapp.com", 
+      projectId: "meap-games", 
+      storageBucket: "meap-games.firebasestorage.app", 
+      messagingSenderId: "1092303341508", 
+      appId: "1:1092303341508:web:2b8f..." 
+    };
+    firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+
+    function togglePass(eye) {
+      const input = eye.previousElementSibling;
+      if (input.type === "password") { input.type = "text"; eye.textContent = "🙈"; }
+      else { input.type = "password"; eye.textContent = "👁️"; }
+    }
+
+    function kayitOl() {
+      const email = document.getElementById("email").value;
+      const pass = document.getElementById("pass").value;
+      if (pass.length < 6) { 
+        alert("Şifre en az 6 karakter olmalı!"); 
+        return; 
+      }
+      auth.createUserWithEmailAndPassword(email, pass)
+        .then(() => { 
+          alert("Kayıt başarılı! Şimdi giriş yapabilirsin."); 
+          window.location.href = "index.html"; 
+        })
+        .catch(err => alert("HATA: " + err.message));
+    }
+  </script>
+</body>
+</html>
